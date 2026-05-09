@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Vegetation Monitoring data</h1>
+    {% if data %}
+    <h3>Vegetation Data</h3>
+    <ul>
+        <li>NDVI: {{ data.ndvi }}</li>
+        <li>EVI: {{ data.evi }}</li>
+        <li>SAVI: {{ data.savi }}</li>
+    </ul>
+    {% else %}
+    <p>No data available.</p>
+    {% endif %}
+</body>
+
+</html>
