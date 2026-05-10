@@ -1,0 +1,1 @@
+web: gunicorn green-monitor-zw.wsgi:application
