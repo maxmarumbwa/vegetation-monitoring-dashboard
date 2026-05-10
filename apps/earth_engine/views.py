@@ -28,6 +28,10 @@ def chirps_map(request):
     return render(request, "chirps_map.html", context)
 
 
+def home(request):
+    return render(request, "home.html")
+
+
 def get_rainfall_tile(request):
     try:
         date = request.GET.get("date", "2024-01-01")
