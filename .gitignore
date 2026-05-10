@@ -1,3 +1,4 @@
 .env
 /env
+/gee_key
 apps/gee_key/ee-key.json
