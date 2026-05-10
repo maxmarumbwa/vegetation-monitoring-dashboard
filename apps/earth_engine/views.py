@@ -1,14 +1,12 @@
-from django.http import JsonResponse
-import ee
-
-
 import ee
 from django.shortcuts import render
 
+from apps.earth_engine.ee_config import initialize_earth_engine
+
 
 def chirps_map(request):
+    initialize_earth_engine()  # ensure always ready
 
-    # Load CHIRPS daily rainfall
     rainfall = (
         ee.ImageCollection("UCSB-CHG/CHIRPS/DAILY")
         .filterDate("2025-01-01", "2025-01-31")
