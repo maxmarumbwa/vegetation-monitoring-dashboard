@@ -152,7 +152,7 @@ let animationInterval = null;
 let drawnItems = new L.FeatureGroup();
 
 // Zimbabwe bounds
-const zimBounds = L.latLngBounds(L.latLng(-23.5, 25.3), L.latLng(-15.6, 32.0));
+const zimBounds = L.latLngBounds(L.latLng(-22.5, 25), L.latLng(-15.5, 33));
 
 // Helper: add days to a date string (YYYY-MM-DD)
 function addDays(dateStr, days) {
@@ -231,7 +231,7 @@ function showLayer(name) {
 }
 
 function showLayerForDate(startDate, layerName, callback) {
-    // For animation: fetch and display layer for a specific 16‑day window (start_date -> start_date+16)
+    // For animation:    and display layer for a specific 16‑day window (start_date -> start_date+16)
     if (!startDate) return;
     const endDate = addDays(startDate, 16);
     fetch(`/get_ndvi_layers_start_end/?start_date=${startDate}&end_date=${endDate}`)

@@ -176,5 +176,9 @@ def get_ndvi_anomaly_timeseries(request):
     #
 
 
+def home(request):
+    return render(request, "home.html")
+
+
 def dashboard(request):
     return render(request, "index.html")
