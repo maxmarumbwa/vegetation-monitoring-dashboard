@@ -152,7 +152,7 @@ let animationInterval = null;
 let drawnItems = new L.FeatureGroup();
 
 // Zimbabwe bounds
-const zimBounds = L.latLngBounds(L.latLng(-23.5, 25.3), L.latLng(-15.6, 32.0));
+const zimBounds = L.latLngBounds(L.latLng(-23.5, 22.3), L.latLng(-15.6, 36.5));
 
 // Helper: add days to a date string (YYYY-MM-DD)
 function addDays(dateStr, days) {
@@ -230,8 +230,8 @@ function showLayer(name) {
     }
 }
 
+// For animation: fetch and display layer for a specific 16‑day window (start_date -> start_date+16)
 function showLayerForDate(startDate, layerName, callback) {
-    // For animation: fetch and display layer for a specific 16‑day window (start_date -> start_date+16)
     if (!startDate) return;
     const endDate = addDays(startDate, 16);
     fetch(`/get_ndvi_layers_start_end/?start_date=${startDate}&end_date=${endDate}`)
@@ -327,25 +327,26 @@ function updateMapLegend(layerName) {
     if(layerName === "NDVI") {
         legend.innerHTML = `
             <b>NDVI</b><br>
-            <i style="background:#d73027;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> -0.2<br>
-            <i style="background:#fc8d59;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0.0<br>
-            <i style="background:#fee08b;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0.2<br>
-            <i style="background:#d9ef8b;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0.4<br>
-            <i style="background:#91cf60;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0.6<br>
-            <i style="background:#1a9850;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0.8+
+            <i style="background:#0000ff;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Water / Clouds (-1.0)<br>
+            <i style="background:#8c510a;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Bare Soil (0.0)<br>
+            <i style="background:#d8b365;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Sparse Vegetation (0.2)<br>
+            <i style="background:#d9ead3;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Low Vegetation (0.4)<br>
+            <i style="background:#a6d96a;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Moderate Vegetation (0.6)<br>
+            <i style="background:#1a9850;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Dense Vegetation (0.8+)
         `;
     } else if(layerName === "Baseline") {
         legend.innerHTML = `
-            <b>Baseline NDVI</b><br>
-            <i style="background:#f7fbff;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0<br>
-            <i style="background:#c6dbef;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0.2<br>
-            <i style="background:#6baed6;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0.4<br>
-            <i style="background:#2171b5;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0.6<br>
-            <i style="background:#084594;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0.8+
+            <b>Long-term Avg NDVI</b><br>
+            <i style="background:#0000ff;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Water / Clouds (-1.0)<br>
+            <i style="background:#8c510a;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Bare Soil (0.0)<br>
+            <i style="background:#d8b365;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Sparse Vegetation (0.2)<br>
+            <i style="background:#f6e8c3;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Low Vegetation (0.4)<br>
+            <i style="background:#a6d96a;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Moderate Vegetation (0.6)<br>
+            <i style="background:#1a9850;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Dense Vegetation (0.8+)
         `;
     } else if(layerName === "Anomaly") {
         legend.innerHTML = `
-            <b>Anomaly</b><br>
+            <b>NDVI Anomaly</b><br>
             <i style="background:#d73027;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> -0.5<br>
             <i style="background:#fc8d59;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> -0.25<br>
             <i style="background:#ffffbf;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0<br>
@@ -371,7 +372,7 @@ function loadGeoJSON() {
         .then(res => res.json())
         .then(data => {
             geoLayer = L.geoJSON(data, {
-                style: { color: 'yellow', weight: 2 },
+                style: { color: 'black', weight: 2 ,fill: false,fillOpacity: 0},
                 onEachFeature: function(feature, layer) {
                     const name = feature.properties.ADM2_EN;
                     layer.bindTooltip(name);
