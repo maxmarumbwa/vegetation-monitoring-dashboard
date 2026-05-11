@@ -1,9 +1,11 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 import ee
+from apps.earth_engine.ee_config import initialize_earth_engine
 
 
 def get_ndvi_layers_start_end(request):
+    initialize_earth_engine()
     try:
         start_date = request.GET.get("start_date", "2024-01-01")
         end_date = request.GET.get("end_date", "2024-01-16")
