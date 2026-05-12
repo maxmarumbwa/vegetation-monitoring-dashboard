@@ -58,45 +58,13 @@
 
 <div class="sidebar">
 
-    <h3>🌿 NDVI & VCI Dashboard</h3>
+    <h3>🌿 AgroClimate Intelligence Dashboard</h3>
 
     <label>📅 Map Start Date:</label>
     <input type="date" id="mapStartDate" value="2024-01-01" style="width:100%;">
     <label>📅 Map End Date:</label>
     <input type="date" id="mapEndDate" value="2024-01-16" style="width:100%;">
     <button id="reloadBtn">⟳ Reload map</button>
-    <hr>
-
-    <div>
-        <h4>🎞️ Animation Control</h4>
-        <label>Start Date:</label>
-        <input type="date" id="animStart" value="2024-01-01" style="width:100%; margin-bottom:3px;">
-        <label>End Date:</label>
-        <input type="date" id="animEnd" value="2024-06-01" style="width:100%; margin-bottom:3px;">
-        <label>Speed (ms per frame):</label>
-        <input type="number" id="animSpeed" value="1500" style="width:100%;" min="200">
-        <label>Layer to Animate:</label>
-        <select id="animLayer" style="width:100%; margin-bottom:5px;">
-            <option value="NDVI">NDVI</option>
-            <option value="Baseline">Baseline</option>
-            <option value="Anomaly">Anomaly</option>
-            <option value="VCI">VCI (Vegetation Condition Index)</option>
-        </select>
-        <button id="startAnimationBtn">▶️ Start Animation</button>
-        <button id="stopAnimationBtn">⏹ Stop Animation</button>
-
-        <!-- CURRENT DATE DISPLAY -->
-        <div style="margin-top:5px;">
-            <strong>Current Animation Window:</strong> <span id="animCurrentDate">—</span>
-        </div>
-    </div>
-    <hr>
-
-    <label>📊 Time Series Range:</label>
-    <input type="date" id="start_date" value="2024-01-01" style="width:100%;">
-    <input type="date" id="end_date" value="2024-06-01" style="width:100%; margin-top:5px;">
-
-    <hr>
 
     <h4>🗺️ Layers</h4>
     <button onclick="showLayer('NDVI')">🌱 NDVI</button>
@@ -104,6 +72,13 @@
     <button onclick="showLayer('Anomaly')">⚠️ Anomaly</button>
     <button onclick="showLayer('VCI')">💧 VCI (Veg Condition)</button>
 
+    <hr>
+
+    <label>📊 Time Series Range:</label>
+    <input type="date" id="start_date" value="2024-01-01" style="width:100%;">
+    <input type="date" id="end_date" value="2024-06-01" style="width:100%; margin-top:5px;">
+
+   
     <hr>
 
     <h4>🔄 Mode</h4>
@@ -262,62 +237,6 @@ function showLayerForDate(startDate, layerName, callback) {
             if (callback) callback();
         });
 }
-
-// ---------------- ANIMATION ----------------
-function getDatesBetween(startDate, endDate) {
-    let dates = [];
-    let current = new Date(startDate);
-    const end = new Date(endDate);
-    while(current <= end){
-        dates.push(current.toISOString().split("T")[0]);
-        current.setDate(current.getDate() + 16);
-    }
-    return dates;
-}
-
-function animateDates() {
-    if (animationInterval) clearInterval(animationInterval);
-    const start = document.getElementById("animStart").value;
-    const end = document.getElementById("animEnd").value;
-    const speed = parseInt(document.getElementById("animSpeed").value);
-    const layerName = document.getElementById("animLayer").value;
-    if (!start || !end) return alert("Set start and end dates for animation");
-    const demoDates = getDatesBetween(start, end);
-    if (demoDates.length === 0) return alert("No dates in range");
-    let idx = 0;
-    animationInterval = setInterval(() => {
-        const windowStart = demoDates[idx % demoDates.length];
-        const windowEnd = addDays(windowStart, 16);
-        document.getElementById("mapStartDate").value = windowStart;
-        document.getElementById("mapEndDate").value = windowEnd;
-        document.getElementById("animCurrentDate").innerHTML = `${windowStart} → ${windowEnd}`;
-
-        showLayerForDate(windowStart, layerName, () => {
-            // After map updates, refresh timeseries if needed
-            if (mode === "pixel" && currentPoint) loadPixelTimeSeries(currentPoint.lat, currentPoint.lon);
-            if (mode === "polygon" && currentProvince && geoLayer) {
-                geoLayer.eachLayer(layer => {
-                    if (layer.feature && layer.feature.properties.ADM2_EN === currentProvince) {
-                        loadPolygonTimeSeries(layer.feature.geometry, currentProvince);
-                    }
-                });
-            }
-        });
-
-        document.getElementById("status").innerHTML = `🎞️ Animating ${layerName}: ${windowStart} → ${windowEnd}`;
-        idx++;
-    }, speed);
-}
-
-function stopAnimation() {
-    clearInterval(animationInterval);
-    animationInterval = null;
-    document.getElementById("status").innerHTML = "Animation stopped";
-    document.getElementById("animCurrentDate").innerHTML = "—";
-}
-
-document.getElementById("startAnimationBtn").onclick = animateDates;
-document.getElementById("stopAnimationBtn").onclick = stopAnimation;
 
 // ---------------- MAP LEGEND (with VCI support) ----------------
 function updateMapLegend(layerName) {
