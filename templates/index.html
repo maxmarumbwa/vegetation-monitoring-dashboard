@@ -66,12 +66,67 @@
     <input type="date" id="mapEndDate" value="2024-01-16" style="width:100%;">
     <button id="reloadBtn">⟳ Reload map</button>
 
-    <h4>🗺️ Layers</h4>
-    <button onclick="showLayer('NDVI')">🌱 NDVI</button>
-    <button onclick="showLayer('Baseline')">📊 Baseline</button>
-    <button onclick="showLayer('Anomaly')">⚠️ Anomaly</button>
-    <button onclick="showLayer('VCI')">💧 VCI (Veg Condition)</button>
 
+    <h4>🗺️ Layers</h4>
+    <!-- NDVI DROPDOWN -->
+    <details style="margin-bottom:8px;">
+        <summary style="
+            cursor:pointer;
+            padding:8px;
+            background:#e9ecef;
+            border-radius:8px;
+            font-weight:bold;
+        ">
+            🌱 NDVI Products
+        </summary>
+
+        <div style="margin-top:6px; display:flex; flex-direction:column; gap:5px;">
+            <button onclick="showLayer('NDVI')">NDVI</button>
+            <button onclick="showLayer('Baseline')">Baseline</button>
+            <button onclick="showLayer('Anomaly')">Anomaly</button>
+            <button onclick="showLayer('VCI')">VCI</button>
+        </div>
+    </details>
+
+    <!-- RAINFALL DROPDOWN -->
+    <details style="margin-bottom:8px;">
+        <summary style="
+            cursor:pointer;
+            padding:8px;
+            background:#e9ecef;
+            border-radius:8px;
+            font-weight:bold;
+        ">
+            🌧️ Rainfall Products
+        </summary>
+
+        <div style="margin-top:6px; display:flex; flex-direction:column; gap:5px;">
+            <button onclick="showLayer('Rainfall')">Rainfall</button>
+            <button onclick="showLayer('RainfallBaseline')">Baseline</button>
+            <button onclick="showLayer('RainfallAnomaly')">Anomaly</button>
+            <button onclick="showLayer('RainfallZscore')">Z-Score</button>
+        </div>
+    </details>
+
+    <!-- TEMPERATURE DROPDOWN -->
+    <details>
+        <summary style="
+            cursor:pointer;
+            padding:8px;
+            background:#e9ecef;
+            border-radius:8px;
+            font-weight:bold;
+        ">
+            🌡️ Temperature Products
+        </summary>
+
+        <div style="margin-top:6px; display:flex; flex-direction:column; gap:5px;">
+            <button onclick="showLayer('Temperature')">Temperature</button>
+            <button onclick="showLayer('TemperatureBaseline')">Baseline</button>
+            <button onclick="showLayer('TemperatureAnomaly')">Anomaly</button>
+            <button onclick="showLayer('TemperatureZscore')">Z-Score</button>
+        </div>
+    </details>
     <hr>
 
     <label>📊 Time Series Range:</label>
