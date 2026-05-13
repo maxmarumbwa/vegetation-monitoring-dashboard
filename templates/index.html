@@ -52,77 +52,53 @@
         }
 
         /* product list style */
-        .info-btn{
-    background:grey;
+
+.info-btn{
+    background:#0d6efd;
     color:white;
     border:none;
     border-radius:50%;
-    width:13px;
-    height:13px;
-    font-size:7px;
+    width:20px;
+    height:20px;
+    font-size:12px;
     cursor:pointer;
     margin-left:6px;
     padding:0;
 }
 
-.info-modal{
-    display:none;
-    position:fixed;
-    z-index:9999;
-    left:0;
-    top:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.5);
-}
-
-.info-modal-content{
-    background:white;
-    width:350px;
-    max-width:90%;
-    margin:10% auto;
-    padding:18px;
-    border-radius:12px;
-    position:relative;
-    box-shadow:0 4px 18px rgba(0,0,0,0.25);
-    animation:fadeIn 0.2s ease;
-}
-
-.info-close{
-    position:absolute;
-    right:12px;
-    top:8px;
-    font-size:22px;
-    cursor:pointer;
-    color:#666;
-}
-
-.info-close:hover{
-    color:black;
-}
-
-@keyframes fadeIn{
-    from{
-        transform:translateY(-10px);
-        opacity:0;
-    }
-    to{
-        transform:translateY(0);
-        opacity:1;
-    }
-}
-
 .layer-row{
     display:flex;
     align-items:center;
+    justify-content:space-between;
     gap:5px;
 }
 
 .sub-layer{
     display:flex;
     align-items:center;
+    justify-content:space-between;
     gap:5px;
 }
+
+.info-panel{
+    display:none;
+    margin-top:6px;
+    margin-bottom:8px;
+    background:#ffffff;
+    border-left:4px solid #0d6efd;
+    padding:10px;
+    border-radius:8px;
+    font-size:13px;
+    color:#333;
+    line-height:1.5;
+    box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+.info-panel h4{
+    margin:0 0 5px 0;
+    font-size:14px;
+}
+
 
     </style>
 </head>
@@ -142,279 +118,264 @@
 
 
     <h4>🗺️ Layers</h4>
-    <h4>🗺️ Layers</h4>
+   
+<!-- =========================
+     VEGETATION
+========================= -->
 
-    <!-- =========================
-        VEGETATION
-    ========================= -->
+<details style="margin-bottom:10px;" open>
 
-    <details style="margin-bottom:10px;" open>
+    <summary style="
+        cursor:pointer;
+        padding:8px;
+        background:#e9ecef;
+        border-radius:8px;
+        font-weight:bold;
+    ">
+        🌱 Vegetation Products
 
-        <summary style="
-            cursor:pointer;
-            padding:8px;
-            background:#e9ecef;
-            border-radius:8px;
-            font-weight:bold;
-        ">
-            🌱 Vegetation Products
+        <button class="info-btn"
+            onclick="event.preventDefault(); event.stopPropagation(); toggleInfo('vegInfo')">
+            i
+        </button>
+    </summary>
+
+    <!-- MAIN PRODUCT INFO -->
+    <div id="vegInfo" class="info-panel">
+        <h4>🌱 Vegetation Products</h4>
+        Vegetation products are used to monitor crop conditions,
+        vegetation health, drought stress and biomass productivity.
+    </div>
+
+    <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
+
+        <!-- NDVI -->
+        <div class="sub-layer">
+            <button onclick="showLayer('NDVI')">🌿 NDVI</button>
 
             <button class="info-btn"
-                onclick="event.preventDefault(); event.stopPropagation(); openModal('vegInfo')">
+                onclick="toggleInfo('ndviInfo')">
                 i
             </button>
-        </summary>
-
-        <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
-
-            <div class="sub-layer">
-                <button onclick="showLayer('NDVI')">🌿 NDVI</button>
-
-                <button class="info-btn"
-                    onclick="openModal('ndviInfo')">
-                    i
-                </button>
-            </div>
-
-            <div class="sub-layer">
-                <button onclick="showLayer('Baseline')">📊 Baseline</button>
-
-                <button class="info-btn"
-                    onclick="openModal('baselineInfo')">
-                    i
-                </button>
-            </div>
-
-            <div class="sub-layer">
-                <button onclick="showLayer('Anomaly')">⚠️ Anomaly</button>
-
-                <button class="info-btn"
-                    onclick="openModal('anomalyInfo')">
-                    i
-                </button>
-            </div>
-
-            <div class="sub-layer">
-                <button onclick="showLayer('VCI')">💧 VCI</button>
-
-                <button class="info-btn"
-                    onclick="openModal('vciInfo')">
-                    i
-                </button>
-            </div>
-
         </div>
 
-    </details>
+        <div id="ndviInfo" class="info-panel">
+            <h4>🌿 NDVI</h4>
+            NDVI measures vegetation greenness and plant vigor using
+            satellite imagery.
+        </div>
 
-
-    <!-- =========================
-        RAINFALL
-    ========================= -->
-
-    <details style="margin-bottom:10px;">
-
-        <summary style="
-            cursor:pointer;
-            padding:8px;
-            background:#e9ecef;
-            border-radius:8px;
-            font-weight:bold;
-        ">
-            🌧️ Rainfall Products
+        <!-- BASELINE -->
+        <div class="sub-layer">
+            <button onclick="showLayer('Baseline')">📊 Baseline</button>
 
             <button class="info-btn"
-                onclick="event.preventDefault(); event.stopPropagation(); openModal('rainInfo')">
+                onclick="toggleInfo('baselineInfo')">
                 i
             </button>
-        </summary>
-
-        <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
-
-            <div class="sub-layer">
-                <button onclick="showLayer('Rainfall')">🌧️ Rainfall</button>
-
-                <button class="info-btn"
-                    onclick="openModal('rainfallSubInfo')">
-                    i
-                </button>
-            </div>
-
-            <div class="sub-layer">
-                <button onclick="showLayer('RainfallBaseline')">📊 Baseline</button>
-
-                <button class="info-btn"
-                    onclick="openModal('rainBaseInfo')">
-                    i
-                </button>
-            </div>
-
-            <div class="sub-layer">
-                <button onclick="showLayer('RainfallAnomaly')">⚠️ Anomaly</button>
-
-                <button class="info-btn"
-                    onclick="openModal('rainAnomInfo')">
-                    i
-                </button>
-            </div>
-
         </div>
 
-    </details>
+        <div id="baselineInfo" class="info-panel">
+            <h4>📊 Baseline</h4>
+            Baseline represents long-term average vegetation conditions
+            for comparison against current observations.
+        </div>
 
-
-    <!-- =========================
-        TEMPERATURE
-    ========================= -->
-
-    <details>
-
-        <summary style="
-            cursor:pointer;
-            padding:8px;
-            background:#e9ecef;
-            border-radius:8px;
-            font-weight:bold;
-        ">
-            🌡️ Temperature Products
+        <!-- ANOMALY -->
+        <div class="sub-layer">
+            <button onclick="showLayer('Anomaly')">⚠️ Anomaly</button>
 
             <button class="info-btn"
-                onclick="event.preventDefault(); event.stopPropagation(); openModal('tempInfo')">
+                onclick="toggleInfo('anomalyInfo')">
                 i
             </button>
-        </summary>
-
-        <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
-
-            <div class="sub-layer">
-                <button onclick="showLayer('Temperature')">🌡️ Temperature</button>
-
-                <button class="info-btn"
-                    onclick="openModal('tempSubInfo')">
-                    i
-                </button>
-            </div>
-
-            <div class="sub-layer">
-                <button onclick="showLayer('TemperatureBaseline')">📊 Baseline</button>
-
-                <button class="info-btn"
-                    onclick="openModal('tempBaseInfo')">
-                    i
-                </button>
-            </div>
-
-            <div class="sub-layer">
-                <button onclick="showLayer('TemperatureAnomaly')">⚠️ Anomaly</button>
-
-                <button class="info-btn"
-                    onclick="openModal('tempAnomInfo')">
-                    i
-                </button>
-            </div>
-
         </div>
 
-    </details>
-
-
-    <!-- =========================
-        MODALS
-    ========================= -->
-
-    <!-- VEGETATION -->
-    <div id="vegInfo" class="info-modal">
-        <div class="info-modal-content">
-            <span class="info-close" onclick="closeModal('vegInfo')">&times;</span>
-
-            <h3>🌱 Vegetation Products</h3>
-
-            <p>
-                Vegetation products are used to monitor crop conditions,
-                vegetation health, biomass production and drought stress.
-            </p>
+        <div id="anomalyInfo" class="info-panel">
+            <h4>⚠️ Anomaly</h4>
+            Anomaly shows deviations from normal vegetation conditions
+            and helps identify drought stress.
         </div>
+
+        <!-- VCI -->
+        <div class="sub-layer">
+            <button onclick="showLayer('VCI')">💧 VCI</button>
+
+            <button class="info-btn"
+                onclick="toggleInfo('vciInfo')">
+                i
+            </button>
+        </div>
+
+        <div id="vciInfo" class="info-panel">
+            <h4>💧 VCI</h4>
+            VCI indicates vegetation drought stress by comparing current
+            vegetation conditions against historical extremes.
+        </div>
+
     </div>
 
-    <!-- NDVI -->
-    <div id="ndviInfo" class="info-modal">
-        <div class="info-modal-content">
-            <span class="info-close" onclick="closeModal('ndviInfo')">&times;</span>
+</details>
 
-            <h3>🌿 NDVI</h3>
 
-            <p>
-                NDVI measures vegetation greenness and plant vigor using
-                satellite imagery.
-            </p>
-        </div>
+<!-- =========================
+     RAINFALL
+========================= -->
+
+<details style="margin-bottom:10px;">
+
+    <summary style="
+        cursor:pointer;
+        padding:8px;
+        background:#e9ecef;
+        border-radius:8px;
+        font-weight:bold;
+    ">
+        🌧️ Rainfall Products
+
+        <button class="info-btn"
+            onclick="event.preventDefault(); event.stopPropagation(); toggleInfo('rainInfo')">
+            i
+        </button>
+    </summary>
+
+    <!-- MAIN PRODUCT INFO -->
+    <div id="rainInfo" class="info-panel">
+        <h4>🌧️ Rainfall Products</h4>
+        Rainfall products monitor precipitation distribution,
+        rainfall deficits and seasonal performance.
     </div>
 
-    <!-- BASELINE -->
-    <div id="baselineInfo" class="info-modal">
-        <div class="info-modal-content">
-            <span class="info-close" onclick="closeModal('baselineInfo')">&times;</span>
+    <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
 
-            <h3>📊 Baseline</h3>
+        <!-- RAINFALL -->
+        <div class="sub-layer">
+            <button onclick="showLayer('Rainfall')">🌧️ Rainfall</button>
 
-            <p>
-                Baseline represents the long-term average vegetation condition.
-            </p>
+            <button class="info-btn"
+                onclick="toggleInfo('rainfallSubInfo')">
+                i
+            </button>
         </div>
+
+        <div id="rainfallSubInfo" class="info-panel">
+            <h4>🌧️ Rainfall</h4>
+            Displays observed rainfall totals for the selected period.
+        </div>
+
+        <!-- BASELINE -->
+        <div class="sub-layer">
+            <button onclick="showLayer('RainfallBaseline')">📊 Baseline</button>
+
+            <button class="info-btn"
+                onclick="toggleInfo('rainBaseInfo')">
+                i
+            </button>
+        </div>
+
+        <div id="rainBaseInfo" class="info-panel">
+            <h4>📊 Rainfall Baseline</h4>
+            Shows long-term average rainfall conditions.
+        </div>
+
+        <!-- ANOMALY -->
+        <div class="sub-layer">
+            <button onclick="showLayer('RainfallAnomaly')">⚠️ Anomaly</button>
+
+            <button class="info-btn"
+                onclick="toggleInfo('rainAnomInfo')">
+                i
+            </button>
+        </div>
+
+        <div id="rainAnomInfo" class="info-panel">
+            <h4>⚠️ Rainfall Anomaly</h4>
+            Indicates wetter or drier than normal conditions.
+        </div>
+
     </div>
 
-    <!-- ANOMALY -->
-    <div id="anomalyInfo" class="info-modal">
-        <div class="info-modal-content">
-            <span class="info-close" onclick="closeModal('anomalyInfo')">&times;</span>
+</details>
 
-            <h3>⚠️ Anomaly</h3>
 
-            <p>
-                Anomaly shows deviations from normal vegetation conditions.
-            </p>
-        </div>
+<!-- =========================
+     TEMPERATURE
+========================= -->
+
+<details>
+
+    <summary style="
+        cursor:pointer;
+        padding:8px;
+        background:#e9ecef;
+        border-radius:8px;
+        font-weight:bold;
+    ">
+        🌡️ Temperature Products
+
+        <button class="info-btn"
+            onclick="event.preventDefault(); event.stopPropagation(); toggleInfo('tempInfo')">
+            i
+        </button>
+    </summary>
+
+    <!-- MAIN PRODUCT INFO -->
+    <div id="tempInfo" class="info-panel">
+        <h4>🌡️ Temperature Products</h4>
+        Temperature products help monitor heat stress,
+        climate variability and temperature extremes.
     </div>
 
-    <!-- VCI -->
-    <div id="vciInfo" class="info-modal">
-        <div class="info-modal-content">
-            <span class="info-close" onclick="closeModal('vciInfo')">&times;</span>
+    <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
 
-            <h3>💧 VCI</h3>
+        <!-- TEMPERATURE -->
+        <div class="sub-layer">
+            <button onclick="showLayer('Temperature')">🌡️ Temperature</button>
 
-            <p>
-                VCI indicates vegetation drought stress conditions.
-            </p>
+            <button class="info-btn"
+                onclick="toggleInfo('tempSubInfo')">
+                i
+            </button>
         </div>
+
+        <div id="tempSubInfo" class="info-panel">
+            <h4>🌡️ Temperature</h4>
+            Displays observed temperature conditions for the selected period.
+        </div>
+
+        <!-- BASELINE -->
+        <div class="sub-layer">
+            <button onclick="showLayer('TemperatureBaseline')">📊 Baseline</button>
+
+            <button class="info-btn"
+                onclick="toggleInfo('tempBaseInfo')">
+                i
+            </button>
+        </div>
+
+        <div id="tempBaseInfo" class="info-panel">
+            <h4>📊 Temperature Baseline</h4>
+            Shows long-term average temperature conditions.
+        </div>
+
+        <!-- ANOMALY -->
+        <div class="sub-layer">
+            <button onclick="showLayer('TemperatureAnomaly')">⚠️ Anomaly</button>
+
+            <button class="info-btn"
+                onclick="toggleInfo('tempAnomInfo')">
+                i
+            </button>
+        </div>
+
+        <div id="tempAnomInfo" class="info-panel">
+            <h4>⚠️ Temperature Anomaly</h4>
+            Indicates hotter or cooler than normal conditions.
+        </div>
+
     </div>
 
-    <!-- RAINFALL -->
-    <div id="rainInfo" class="info-modal">
-        <div class="info-modal-content">
-            <span class="info-close" onclick="closeModal('rainInfo')">&times;</span>
-
-            <h3>🌧️ Rainfall Products</h3>
-
-            <p>
-                Rainfall products help monitor precipitation distribution,
-                seasonal rainfall performance and drought conditions.
-            </p>
-        </div>
-    </div>
-
-    <!-- TEMPERATURE -->
-    <div id="tempInfo" class="info-modal">
-        <div class="info-modal-content">
-            <span class="info-close" onclick="closeModal('tempInfo')">&times;</span>
-
-            <h3>🌡️ Temperature Products</h3>
-
-            <p>
-                Temperature products help assess heat stress and climate variability.
-            </p>
-        </div>
-    </div>
+</details>
 
     <hr>
 
@@ -462,27 +423,18 @@
 <script>
 
 //MODAL SCRIPT
+function toggleInfo(id){
 
+    const panel = document.getElementById(id);
 
-function openModal(id){
-    document.getElementById(id).style.display = "block";
+    if(panel.style.display === "block"){
+        panel.style.display = "none";
+    }else{
+        panel.style.display = "block";
+    }
+
 }
-
-function closeModal(id){
-    document.getElementById(id).style.display = "none";
-}
-
-window.onclick = function(event){
-
-    document.querySelectorAll('.info-modal').forEach(function(modal){
-
-        if(event.target == modal){
-            modal.style.display = "none";
-        }
-
-    });
-
-}    
+// init variables
 let map, layers = {}, activeLayer;
 let chart = null;
 let chartDataStore = null;
