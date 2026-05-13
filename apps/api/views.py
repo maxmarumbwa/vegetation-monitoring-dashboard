@@ -11,6 +11,12 @@ def get_ndvi_layers_start_end(request):
         end_date = request.GET.get("end_date", "2024-01-16")
 
         # ----------------- CURRENT PERIOD (MEAN OVER RANGE) -----------------
+        # for clipping
+        zim = ee.FeatureCollection("FAO/GAUL/2015/level0").filter(
+            ee.Filter.eq("ADM0_NAME", "Zimbabwe")
+        )
+        zim_geom = zim.geometry()
+
         collection_current = (
             ee.ImageCollection("MODIS/061/MOD13A2")
             .filterDate(start_date, end_date)
@@ -18,7 +24,7 @@ def get_ndvi_layers_start_end(request):
             .map(lambda img: img.multiply(0.0001))
         )
         # Compute mean; if no images, fallback to zero image (error handling)
-        current = collection_current.mean().rename("NDVI")
+        current = collection_current.mean().rename("NDVI").clip(zim_geom)
 
         # ----------------- HISTORICAL SEASONAL (SAME DOY RANGE) -----------------
         historical = (
@@ -34,12 +40,12 @@ def get_ndvi_layers_start_end(request):
 
         seasonal_scaled = seasonal.map(lambda img: img.multiply(0.0001))
 
-        baseline = seasonal_scaled.mean()
-        ndvi_min = seasonal_scaled.min()
-        ndvi_max = seasonal_scaled.max()
+        baseline = seasonal_scaled.mean().clip(zim_geom).selfMask()
+        ndvi_min = seasonal_scaled.min().clip(zim_geom)
+        ndvi_max = seasonal_scaled.max().clip(zim_geom)
 
         # ----------------- ANOMALY -----------------
-        anomaly = current.subtract(baseline)
+        anomaly = current.subtract(baseline).clip(zim_geom)
 
         # ----------------- VCI -----------------
         vci = (
@@ -48,7 +54,9 @@ def get_ndvi_layers_start_end(request):
             .multiply(100)
             .rename("VCI")
         )
-        vci = vci.where(ndvi_max.eq(ndvi_min), 0)
+        vci = vci.where(ndvi_max.eq(ndvi_min), 0).clip(
+            zim_geom
+        )  # Handle division by zero
 
         # ----------------- VISUALISATION PARAMETERS -----------------
         ndvi_vis = {"min": 0, "max": 1, "palette": ["white", "green"]}
