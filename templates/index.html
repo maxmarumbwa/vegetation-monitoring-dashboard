@@ -51,55 +51,44 @@
             z-index: 1000;
         }
 
-        /* product list style */
+        .info-btn {
+            background: grey;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            font-size: 9px;
+            cursor: pointer;
+            margin-left: 6px;
+            padding: 0;
+        }
 
-.info-btn{
-    background:grey;
-    color:white;
-    border:none;
-    border-radius:50%;
-    width:12px;
-    height:12px;
-    font-size:9px;
-    cursor:pointer;
-    margin-left:6px;
-    padding:0;
-}
+        .sub-layer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
 
-.layer-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:5px;
-}
+        .info-panel {
+            display: none;
+            margin-top: 6px;
+            margin-bottom: 8px;
+            background: #ffffff;
+            border-left: 4px solid #0d6efd;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #333;
+            line-height: 1.5;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
 
-.sub-layer{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:5px;
-}
-
-.info-panel{
-    display:none;
-    margin-top:6px;
-    margin-bottom:8px;
-    background:#ffffff;
-    border-left:4px solid #0d6efd;
-    padding:10px;
-    border-radius:8px;
-    font-size:13px;
-    color:#333;
-    line-height:1.5;
-    box-shadow:0 2px 6px rgba(0,0,0,0.08);
-}
-
-.info-panel h4{
-    margin:0 0 5px 0;
-    font-size:14px;
-}
-
-
+        .info-panel h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -107,7 +96,6 @@
 <div class="container">
 
 <div class="sidebar">
-
     <h3>🌿 AgroClimate Intelligence Dashboard</h3>
 
     <label>📅 Map Start Date:</label>
@@ -116,266 +104,80 @@
     <input type="date" id="mapEndDate" value="2024-01-16" style="width:100%;">
     <button id="reloadBtn">⟳ Reload map</button>
 
-
     <h4>🗺️ Layers</h4>
-   
-<!-- =========================
-     VEGETATION
-========================= -->
 
-<details style="margin-bottom:10px;" open>
-
-    <summary style="
-        cursor:pointer;
-        padding:8px;
-        background:#e9ecef;
-        border-radius:8px;
-        font-weight:bold;
-    ">
-        🌱 Vegetation Products
-
-        <button class="info-btn"
-            onclick="event.preventDefault(); event.stopPropagation(); toggleInfo('vegInfo')">
-            i
-        </button>
-    </summary>
-
-    <!-- MAIN PRODUCT INFO -->
-    <div id="vegInfo" class="info-panel">
-        <h4>🌱 Vegetation Products</h4>
-        Vegetation products are used to monitor crop conditions,
-        vegetation health, drought stress and biomass productivity.
-    </div>
-
-    <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
-
-        <!-- NDVI -->
-        <div class="sub-layer">
-            <button onclick="showLayer('NDVI')">🌿 NDVI</button>
-
-            <button class="info-btn"
-                onclick="toggleInfo('ndviInfo')">
-                i
-            </button>
+    <!-- ========================= VEGETATION PRODUCTS ========================= -->
+    <details style="margin-bottom:10px;" open>
+        <summary style="cursor:pointer; padding:8px; background:#e9ecef; border-radius:8px; font-weight:bold;">
+            🌱 Vegetation Products
+            <button class="info-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleInfo('vegInfo')">i</button>
+        </summary>
+        <div id="vegInfo" class="info-panel">
+            <h4>🌱 Vegetation Products</h4>
+            Vegetation products are used to monitor crop conditions, vegetation health, drought stress and biomass productivity.
         </div>
 
-        <div id="ndviInfo" class="info-panel">
-            <h4>🌿 NDVI</h4>
-            NDVI measures vegetation greenness and plant vigor using
-            satellite imagery.
+        <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
+            <!-- NDVI -->
+            <div class="sub-layer">
+                <button onclick="showLayer('NDVI')">🌿 NDVI</button>
+                <label style="font-size:0.8rem;"><input type="checkbox" class="clip-checkbox" data-layer="NDVI"> Clip</label>
+                <button class="info-btn" onclick="toggleInfo('ndviInfo')">i</button>
+            </div>
+            <div id="ndviInfo" class="info-panel">
+                <h4>🌿 NDVI</h4> NDVI measures vegetation greenness and plant vigor using satellite imagery.
+            </div>
+
+            <!-- Baseline -->
+            <div class="sub-layer">
+                <button onclick="showLayer('Baseline')">📊 Baseline</button>
+                <label style="font-size:0.8rem;"><input type="checkbox" class="clip-checkbox" data-layer="Baseline"> Clip</label>
+                <button class="info-btn" onclick="toggleInfo('baselineInfo')">i</button>
+            </div>
+            <div id="baselineInfo" class="info-panel">
+                <h4>📊 Baseline</h4> Baseline represents long-term average vegetation conditions for comparison against current observations.
+            </div>
+
+            <!-- Anomaly -->
+            <div class="sub-layer">
+                <button onclick="showLayer('Anomaly')">⚠️ Anomaly</button>
+                <label style="font-size:0.8rem;"><input type="checkbox" class="clip-checkbox" data-layer="Anomaly"> Clip</label>
+                <button class="info-btn" onclick="toggleInfo('anomalyInfo')">i</button>
+            </div>
+            <div id="anomalyInfo" class="info-panel">
+                <h4>⚠️ Anomaly</h4> Anomaly shows deviations from normal vegetation conditions and helps identify drought stress.
+            </div>
+
+            <!-- VCI -->
+            <div class="sub-layer">
+                <button onclick="showLayer('VCI')"> VCI</button>
+                <label style="font-size:0.8rem;"><input type="checkbox" class="clip-checkbox" data-layer="VCI"> Clip</label>
+                <button class="info-btn" onclick="toggleInfo('vciInfo')">i</button>
+            </div>
+            <div id="vciInfo" class="info-panel">
+                <h4>💧 VCI</h4> VCI indicates vegetation drought stress by comparing current vegetation conditions against historical extremes.
+            </div>
         </div>
+    </details>
 
-        <!-- BASELINE -->
-        <div class="sub-layer">
-            <button onclick="showLayer('Baseline')">📊 Baseline</button>
+    <!-- ========================= RAINFALL PRODUCTS (placeholder) ========================= -->
+    <details style="margin-bottom:10px;">
+        <summary style="cursor:pointer; padding:8px; background:#e9ecef; border-radius:8px; font-weight:bold;">
+            🌧️ Rainfall Products
+            <button class="info-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleInfo('rainInfo')">i</button>
+        </summary>
+        <div id="rainInfo" class="info-panel"><h4>🌧️ Rainfall Products</h4>Coming soon.</div>
+        
+    </details>
 
-            <button class="info-btn"
-                onclick="toggleInfo('baselineInfo')">
-                i
-            </button>
-        </div>
-
-        <div id="baselineInfo" class="info-panel">
-            <h4>📊 Baseline</h4>
-            Baseline represents long-term average vegetation conditions
-            for comparison against current observations.
-        </div>
-
-        <!-- ANOMALY -->
-        <div class="sub-layer">
-            <button onclick="showLayer('Anomaly')">⚠️ Anomaly</button>
-
-            <button class="info-btn"
-                onclick="toggleInfo('anomalyInfo')">
-                i
-            </button>
-        </div>
-
-        <div id="anomalyInfo" class="info-panel">
-            <h4>⚠️ Anomaly</h4>
-            Anomaly shows deviations from normal vegetation conditions
-            and helps identify drought stress.
-        </div>
-
-        <!-- VCI -->
-        <div class="sub-layer">
-            <button onclick="showLayer('VCI')">💧 VCI</button>
-
-            <button class="info-btn"
-                onclick="toggleInfo('vciInfo')">
-                i
-            </button>
-        </div>
-
-        <div id="vciInfo" class="info-panel">
-            <h4>💧 VCI</h4>
-            VCI indicates vegetation drought stress by comparing current
-            vegetation conditions against historical extremes.
-        </div>
-
-    </div>
-
-</details>
-
-
-<!-- =========================
-     RAINFALL
-========================= -->
-
-<details style="margin-bottom:10px;">
-
-    <summary style="
-        cursor:pointer;
-        padding:8px;
-        background:#e9ecef;
-        border-radius:8px;
-        font-weight:bold;
-    ">
-        🌧️ Rainfall Products
-
-        <button class="info-btn"
-            onclick="event.preventDefault(); event.stopPropagation(); toggleInfo('rainInfo')">
-            i
-        </button>
-    </summary>
-
-    <!-- MAIN PRODUCT INFO -->
-    <div id="rainInfo" class="info-panel">
-        <h4>🌧️ Rainfall Products</h4>
-        Rainfall products monitor precipitation distribution,
-        rainfall deficits and seasonal performance.
-    </div>
-
-    <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
-
-        <!-- RAINFALL -->
-        <div class="sub-layer">
-            <button onclick="showLayer('Rainfall')">🌧️ Rainfall</button>
-
-            <button class="info-btn"
-                onclick="toggleInfo('rainfallSubInfo')">
-                i
-            </button>
-        </div>
-
-        <div id="rainfallSubInfo" class="info-panel">
-            <h4>🌧️ Rainfall</h4>
-            Displays observed rainfall totals for the selected period.
-        </div>
-
-        <!-- BASELINE -->
-        <div class="sub-layer">
-            <button onclick="showLayer('RainfallBaseline')">📊 Baseline</button>
-
-            <button class="info-btn"
-                onclick="toggleInfo('rainBaseInfo')">
-                i
-            </button>
-        </div>
-
-        <div id="rainBaseInfo" class="info-panel">
-            <h4>📊 Rainfall Baseline</h4>
-            Shows long-term average rainfall conditions.
-        </div>
-
-        <!-- ANOMALY -->
-        <div class="sub-layer">
-            <button onclick="showLayer('RainfallAnomaly')">⚠️ Anomaly</button>
-
-            <button class="info-btn"
-                onclick="toggleInfo('rainAnomInfo')">
-                i
-            </button>
-        </div>
-
-        <div id="rainAnomInfo" class="info-panel">
-            <h4>⚠️ Rainfall Anomaly</h4>
-            Indicates wetter or drier than normal conditions.
-        </div>
-
-    </div>
-
-</details>
-
-
-<!-- =========================
-     TEMPERATURE
-========================= -->
-
-<details>
-
-    <summary style="
-        cursor:pointer;
-        padding:8px;
-        background:#e9ecef;
-        border-radius:8px;
-        font-weight:bold;
-    ">
-        🌡️ Temperature Products
-
-        <button class="info-btn"
-            onclick="event.preventDefault(); event.stopPropagation(); toggleInfo('tempInfo')">
-            i
-        </button>
-    </summary>
-
-    <!-- MAIN PRODUCT INFO -->
-    <div id="tempInfo" class="info-panel">
-        <h4>🌡️ Temperature Products</h4>
-        Temperature products help monitor heat stress,
-        climate variability and temperature extremes.
-    </div>
-
-    <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
-
-        <!-- TEMPERATURE -->
-        <div class="sub-layer">
-            <button onclick="showLayer('Temperature')">🌡️ Temperature</button>
-
-            <button class="info-btn"
-                onclick="toggleInfo('tempSubInfo')">
-                i
-            </button>
-        </div>
-
-        <div id="tempSubInfo" class="info-panel">
-            <h4>🌡️ Temperature</h4>
-            Displays observed temperature conditions for the selected period.
-        </div>
-
-        <!-- BASELINE -->
-        <div class="sub-layer">
-            <button onclick="showLayer('TemperatureBaseline')">📊 Baseline</button>
-
-            <button class="info-btn"
-                onclick="toggleInfo('tempBaseInfo')">
-                i
-            </button>
-        </div>
-
-        <div id="tempBaseInfo" class="info-panel">
-            <h4>📊 Temperature Baseline</h4>
-            Shows long-term average temperature conditions.
-        </div>
-
-        <!-- ANOMALY -->
-        <div class="sub-layer">
-            <button onclick="showLayer('TemperatureAnomaly')">⚠️ Anomaly</button>
-
-            <button class="info-btn"
-                onclick="toggleInfo('tempAnomInfo')">
-                i
-            </button>
-        </div>
-
-        <div id="tempAnomInfo" class="info-panel">
-            <h4>⚠️ Temperature Anomaly</h4>
-            Indicates hotter or cooler than normal conditions.
-        </div>
-
-    </div>
-
-</details>
+    <!-- ========================= TEMPERATURE PRODUCTS (placeholder) ========================= -->
+    <details>
+        <summary style="cursor:pointer; padding:8px; background:#e9ecef; border-radius:8px; font-weight:bold;">
+            🌡️ Temperature Products
+            <button class="info-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleInfo('tempInfo')">i</button>
+        </summary>
+        <div id="tempInfo" class="info-panel"><h4>🌡️ Temperature Products</h4>Coming soon.</div>
+    </details>
 
     <hr>
 
@@ -383,27 +185,21 @@
     <input type="date" id="start_date" value="2024-01-01" style="width:100%;">
     <input type="date" id="end_date" value="2024-06-01" style="width:100%; margin-top:5px;">
 
-   
     <hr>
-
     <h4>🔄 Mode</h4>
     <div class="mode-toggle">
         <button id="pixelBtn" class="mode-btn">📍 Pixel</button>
         <button id="polyBtn" class="mode-btn active">🗺 Province</button>
     </div>
-
     <button onclick="enableDrawing()">✏️ Draw Custom Region</button>
-
     <div id="infoText">Click a province</div>
 
     <div class="chart-container">
-        <!-- CHART LEGEND -->
         <div id="chart-legend">
             <div><span style="background:green;"></span>NDVI</div>
             <div><span class="baseline"></span>Baseline</div>
             <div><span style="background:red;"></span>Anomaly</div>
         </div>
-
         <canvas id="chart"></canvas>
         <div class="export-buttons">
             <button onclick="exportCSV()">💾 Export CSV</button>
@@ -411,7 +207,6 @@
         </div>
         <div id="status" class="status">Ready</div>
     </div>
-
 </div>
 
 <div id="map">
@@ -421,148 +216,90 @@
 </div>
 
 <script>
-
-//MODAL SCRIPT
-function toggleInfo(id){
-
-    const panel = document.getElementById(id);
-
-    if(panel.style.display === "block"){
-        panel.style.display = "none";
-    }else{
-        panel.style.display = "block";
-    }
-
-}
-// init variables
-let map, layers = {}, activeLayer;
+// ======================= GLOBAL VARIABLES =======================
+let map, activeTileLayer = null, activeLayerName = null;
 let chart = null;
 let chartDataStore = null;
 let mode = "polygon";
 let currentPoint = null;
 let currentProvince = null;
 let geoLayer = null;
-let animationInterval = null;
 let drawnItems = new L.FeatureGroup();
 
-// Zimbabwe bounds
-const zimBounds = L.latLngBounds(L.latLng(-23.5, 22.3), L.latLng(-15.6, 36.5));
+// ======================= ZIMBABWE EXACT BOUNDING BOX =======================
+const zimBounds = L.latLngBounds(
+    L.latLng(-22.42, 25.24), // Southwest corner
+    L.latLng(-15.61, 33.07)  // Northeast corner
+);
 
-// Helper: add days to a date string (YYYY-MM-DD)
+// Helper: add days
 function addDays(dateStr, days) {
     const date = new Date(dateStr);
     date.setDate(date.getDate() + days);
     return date.toISOString().split('T')[0];
 }
 
-// ---------------- INIT ----------------
-function initMap() {
-    map = L.map('map').setView([-19, 29], 6);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-    map.addLayer(drawnItems);
-    loadLayers();
-    loadGeoJSON();
-
-    document.getElementById("reloadBtn").onclick = reloadAll;
-    document.getElementById("pixelBtn").onclick = () => setMode("pixel");
-    document.getElementById("polyBtn").onclick = () => setMode("polygon");
-
-    map.on('click', function(e) {
-        if (mode !== "pixel") return;
-        const lat = e.latlng.lat;
-        const lon = e.latlng.lng;
-        currentPoint = {lat, lon};
-        document.getElementById("infoText").innerText = `📍 Pixel: ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
-        loadPixelTimeSeries(lat, lon);
-    });
-
-    map.fitBounds(zimBounds);
+// ======================= INFO PANEL TOGGLE =======================
+function toggleInfo(id) {
+    const panel = document.getElementById(id);
+    if (panel.style.display === "block") panel.style.display = "none";
+    else panel.style.display = "block";
 }
 
-// ---------------- MODE ----------------
-function setMode(m) {
-    mode = m;
-    document.getElementById("pixelBtn").classList.toggle("active", m==="pixel");
-    document.getElementById("polyBtn").classList.toggle("active", m==="polygon");
-    document.getElementById("infoText").innerText = (m==="pixel") ? "Click map" : "Click a province";
-    if (chart) chart.destroy();
+// ======================= CHECKBOX STATUS =======================
+function getClipStatus(layerName) {
+    let checkbox = document.querySelector(`.clip-checkbox[data-layer="${layerName}"]`);
+    return checkbox ? checkbox.checked : true;
 }
 
-// ---------------- LAYER LOADING (supports NDVI, Baseline, Anomaly, VCI) ----------------
-function loadLayers() {
+// ======================= FETCH AND SHOW LAYER (with clip) =======================
+async function fetchAndShowLayer(layerName) {
     const startDate = document.getElementById("mapStartDate").value;
     const endDate = document.getElementById("mapEndDate").value;
-    fetch(`/get_ndvi_layers_start_end/?start_date=${startDate}&end_date=${endDate}`)
-        .then(res => res.json())
-        .then(data => {
-            if (activeLayer) map.removeLayer(activeLayer);
-            layers = {
-                "NDVI": L.tileLayer(data.ndvi, { bounds: zimBounds, maxBounds: zimBounds }),
-                "Baseline": L.tileLayer(data.baseline, { bounds: zimBounds, maxBounds: zimBounds }),
-                "Anomaly": L.tileLayer(data.anomaly, { bounds: zimBounds, maxBounds: zimBounds }),
-                "VCI": L.tileLayer(data.vci, { bounds: zimBounds, maxBounds: zimBounds })
-            };
-            // Default to NDVI
-            showLayer("NDVI");
-            map.fitBounds(zimBounds);
-        })
-        .catch(err => {
-            console.error("Layer load error:", err);
-            document.getElementById("status").innerHTML = "❌ Failed to load layers";
-        });
-}
+    const clip = getClipStatus(layerName);
+    const statusDiv = document.getElementById("status");
 
-function showLayer(name) {
-    if (activeLayer) map.removeLayer(activeLayer);
-    activeLayer = layers[name];
-    if (activeLayer) {
-        activeLayer.addTo(map);
-        updateMapLegend(name);
-    } else {
-        console.warn(`Layer ${name} not found`);
+    statusDiv.innerHTML = `<span class="loading-spinner"></span> Loading ${layerName}...`;
+
+    try {
+        const response = await fetch(`/get_ndvi_layers_start_end/?start_date=${startDate}&end_date=${endDate}&clip=${clip}`);
+        const data = await response.json();
+
+        let tileUrl = null;
+        if (layerName === "NDVI") tileUrl = data.ndvi;
+        else if (layerName === "Baseline") tileUrl = data.baseline;
+        else if (layerName === "Anomaly") tileUrl = data.anomaly;
+        else if (layerName === "VCI") tileUrl = data.vci;
+
+        if (!tileUrl) throw new Error("No tile URL received");
+
+        if (activeTileLayer) map.removeLayer(activeTileLayer);
+        activeTileLayer = L.tileLayer(tileUrl, { bounds: zimBounds, maxBounds: zimBounds }).addTo(map);
+        activeLayerName = layerName;
+        updateMapLegend(layerName);
+        statusDiv.innerHTML = `✅ ${layerName} loaded (clip: ${clip ? "on" : "off"})`;
+    } catch (err) {
+        console.error(err);
+        statusDiv.innerHTML = `❌ Failed to load ${layerName}`;
     }
 }
 
-// For animation: fetch and display layer for a specific 16‑day window (start_date -> start_date+16)
-function showLayerForDate(startDate, layerName, callback) {
-    if (!startDate) return;
-    const endDate = addDays(startDate, 16);
-    fetch(`/get_ndvi_layers_start_end/?start_date=${startDate}&end_date=${endDate}`)
-        .then(res => res.json())
-        .then(data => {
-            let tileUrl = null;
-            if (layerName === "NDVI") tileUrl = data.ndvi;
-            else if (layerName === "Baseline") tileUrl = data.baseline;
-            else if (layerName === "Anomaly") tileUrl = data.anomaly;
-            else if (layerName === "VCI") tileUrl = data.vci;
-            if (!tileUrl) {
-                if (callback) callback();
-                return;
-            }
-            const newLayer = L.tileLayer(tileUrl, { bounds: zimBounds, maxBounds: zimBounds });
-            newLayer.on('load', () => {
-                if (activeLayer) map.removeLayer(activeLayer);
-                activeLayer = newLayer;
-                activeLayer.addTo(map);
-                updateMapLegend(layerName);
-                if (callback) callback();
-            });
-            // fallback if load event never fires
-            setTimeout(() => { if (callback) callback(); }, 500);
-        })
-        .catch(err => {
-            console.error("Animation layer error:", err);
-            if (callback) callback();
-        });
+function showLayer(name) {
+    if (activeLayerName === name && activeTileLayer && map.hasLayer(activeTileLayer)) return;
+    fetchAndShowLayer(name);
 }
 
-// ---------------- MAP LEGEND (with VCI support) ----------------
+function reloadCurrentLayer() {
+    if (activeLayerName) fetchAndShowLayer(activeLayerName);
+    else fetchAndShowLayer("NDVI");
+}
+
+// ======================= MAP LEGEND =======================
 function updateMapLegend(layerName) {
     const legend = document.getElementById("map-legend");
-    if (!layerName || !layers[layerName]) { legend.innerHTML = ""; return; }
+    if (!layerName) { legend.innerHTML = ""; return; }
 
-    if(layerName === "NDVI") {
+    if (layerName === "NDVI") {
         legend.innerHTML = `
             <b>NDVI</b><br>
             <i style="background:#0000ff;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Water / Clouds (-1.0)<br>
@@ -572,17 +309,9 @@ function updateMapLegend(layerName) {
             <i style="background:#a6d96a;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Moderate Vegetation (0.6)<br>
             <i style="background:#1a9850;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Dense Vegetation (0.8+)
         `;
-    } else if(layerName === "Baseline") {
-        legend.innerHTML = `
-            <b>Long-term Avg NDVI</b><br>
-            <i style="background:#0000ff;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Water / Clouds (-1.0)<br>
-            <i style="background:#8c510a;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Bare Soil (0.0)<br>
-            <i style="background:#d8b365;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Sparse Vegetation (0.2)<br>
-            <i style="background:#f6e8c3;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Low Vegetation (0.4)<br>
-            <i style="background:#a6d96a;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Moderate Vegetation (0.6)<br>
-            <i style="background:#1a9850;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> Dense Vegetation (0.8+)
-        `;
-    } else if(layerName === "Anomaly") {
+    } else if (layerName === "Baseline") {
+        legend.innerHTML = `<b>Long-term Avg NDVI</b><br>(same NDVI color scale)`;
+    } else if (layerName === "Anomaly") {
         legend.innerHTML = `
             <b>NDVI Anomaly</b><br>
             <i style="background:#d73027;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> -0.5<br>
@@ -591,7 +320,7 @@ function updateMapLegend(layerName) {
             <i style="background:#91cf60;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0.25<br>
             <i style="background:#1a9850;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0.5+
         `;
-    } else if(layerName === "VCI") {
+    } else if (layerName === "VCI") {
         legend.innerHTML = `
             <b>VCI (Vegetation Condition Index)</b><br>
             <i style="background:#8b0000;width:16px;height:16px;display:inline-block;margin-right:4px;"></i> 0-15 (Extreme Drought)<br>
@@ -604,13 +333,13 @@ function updateMapLegend(layerName) {
     }
 }
 
-// ---------------- GEOJSON ----------------
+// ======================= GEOJSON (PROVINCES) =======================
 function loadGeoJSON() {
     fetch('/static/geojson/zimadm2.geojson')
         .then(res => res.json())
         .then(data => {
             geoLayer = L.geoJSON(data, {
-                style: { color: 'black', weight: 2 ,fill: false,fillOpacity: 0},
+                style: { color: 'black', weight: 2, fill: false, fillOpacity: 0 },
                 onEachFeature: function(feature, layer) {
                     const name = feature.properties.ADM2_EN;
                     layer.bindTooltip(name);
@@ -626,7 +355,7 @@ function loadGeoJSON() {
         .catch(err => console.error("GeoJSON load error:", err));
 }
 
-// ---------------- PIXEL TIMESERIES (NDVI, Baseline, Anomaly) ----------------
+// ======================= TIMESERIES FUNCTIONS =======================
 function loadPixelTimeSeries(lat, lon) {
     const start = document.getElementById("start_date").value;
     const end = document.getElementById("end_date").value;
@@ -649,7 +378,6 @@ function loadPixelTimeSeries(lat, lon) {
         });
 }
 
-// ---------------- PROVINCE TIMESERIES ----------------
 function loadPolygonTimeSeries(geometry, name) {
     const start = document.getElementById("start_date").value;
     const end = document.getElementById("end_date").value;
@@ -658,28 +386,27 @@ function loadPolygonTimeSeries(geometry, name) {
 
     fetch('/get_ndvi_zonal_timeseries/', {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ geometry, start_date: start, end_date: end })
     })
-    .then(res => res.json())
-    .then(data => {
-        const dates = data.data.map(d => d.date);
-        const ndvi = data.data.map(d => d.ndvi ?? 0);
-        const baseline = data.data.map(d => d.baseline ?? 0);
-        const anomaly = data.data.map(d => d.anomaly ?? 0);
-        drawChart(dates, ndvi, baseline, anomaly);
-        status.innerHTML = `✅ ${name} loaded (${dates.length} points)`;
-    })
-    .catch(err => {
-        console.error(err);
-        status.innerHTML = "❌ Failed to load region data";
-    });
+        .then(res => res.json())
+        .then(data => {
+            const dates = data.data.map(d => d.date);
+            const ndvi = data.data.map(d => d.ndvi ?? 0);
+            const baseline = data.data.map(d => d.baseline ?? 0);
+            const anomaly = data.data.map(d => d.anomaly ?? 0);
+            drawChart(dates, ndvi, baseline, anomaly);
+            status.innerHTML = `✅ ${name} loaded (${dates.length} points)`;
+        })
+        .catch(err => {
+            console.error(err);
+            status.innerHTML = "❌ Failed to load region data";
+        });
 }
 
-// ---------------- DRAW CHART ----------------
 function drawChart(labels, ndvi, baseline, anomaly) {
     if (chart) chart.destroy();
-    chartDataStore = {labels, ndvi, baseline, anomaly};
+    chartDataStore = { labels, ndvi, baseline, anomaly };
     chart = new Chart(document.getElementById("chart"), {
         type: 'line',
         data: {
@@ -694,14 +421,14 @@ function drawChart(labels, ndvi, baseline, anomaly) {
     });
 }
 
-// ---------------- EXPORT ----------------
+// ======================= EXPORT =======================
 function exportCSV() {
     if (!chartDataStore) return alert("No data to export");
     let csv = "Date,NDVI,Baseline,Anomaly\n";
-    for (let i=0;i<chartDataStore.labels.length;i++){
+    for (let i = 0; i < chartDataStore.labels.length; i++) {
         csv += `${chartDataStore.labels[i]},${chartDataStore.ndvi[i]},${chartDataStore.baseline[i]},${chartDataStore.anomaly[i]}\n`;
     }
-    const blob = new Blob([csv], {type:"text/csv"});
+    const blob = new Blob([csv], { type: "text/csv" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "ndvi_timeseries.csv";
@@ -716,7 +443,7 @@ function exportPNG() {
     link.click();
 }
 
-// ---------------- DRAW CUSTOM REGION ----------------
+// ======================= DRAW CUSTOM REGION =======================
 function enableDrawing() {
     const drawControl = new L.Control.Draw({
         draw: { polygon: true, rectangle: true, circle: false, polyline: false, marker: false },
@@ -730,20 +457,60 @@ function enableDrawing() {
         const geom = e.layer.toGeoJSON().geometry;
         loadPolygonTimeSeries(geom, "Custom region");
         document.getElementById("infoText").innerHTML = "✏️ Custom region drawn";
-        // Remove draw control after drawing to avoid clutter
         map.removeControl(drawControl);
     });
 }
 
-// ---------------- RELOAD ----------------
-function reloadAll() {
-    loadLayers();
+// ======================= MODE SWITCH =======================
+function setMode(m) {
+    mode = m;
+    document.getElementById("pixelBtn").classList.toggle("active", m === "pixel");
+    document.getElementById("polyBtn").classList.toggle("active", m === "polygon");
+    document.getElementById("infoText").innerText = (m === "pixel") ? "Click map" : "Click a province";
     if (chart) chart.destroy();
-    chartDataStore = null;
-    document.getElementById("status").innerHTML = "Reloading...";
 }
 
-// ---------------- INIT ----------------
+// ======================= INIT MAP =======================
+function initMap() {
+    map = L.map('map').setView([-19, 29], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    map.addLayer(drawnItems);
+    map.fitBounds(zimBounds);
+
+    // Load provinces GeoJSON
+    loadGeoJSON();
+
+    // Mode buttons
+    document.getElementById("pixelBtn").onclick = () => setMode("pixel");
+    document.getElementById("polyBtn").onclick = () => setMode("polygon");
+
+    // Pixel click
+    map.on('click', function(e) {
+        if (mode !== "pixel") return;
+        const lat = e.latlng.lat;
+        const lon = e.latlng.lng;
+        currentPoint = { lat, lon };
+        document.getElementById("infoText").innerText = `📍 Pixel: ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+        loadPixelTimeSeries(lat, lon);
+    });
+
+    // Reload button
+    document.getElementById("reloadBtn").onclick = reloadCurrentLayer;
+
+    // Checkbox change -> reload current layer if needed
+    document.querySelectorAll('.clip-checkbox').forEach(cb => {
+        cb.addEventListener('change', function() {
+            if (activeLayerName === this.dataset.layer) {
+                reloadCurrentLayer();
+            }
+        });
+    });
+
+    // Initial layer load
+    fetchAndShowLayer("NDVI");
+}
+
+// Start everything
 initMap();
 </script>
 

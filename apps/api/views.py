@@ -5,30 +5,70 @@ from apps.earth_engine.ee_config import initialize_earth_engine
 
 
 def get_ndvi_layers_start_end(request):
+
     initialize_earth_engine()
+
     try:
         start_date = request.GET.get("start_date", "2024-01-01")
         end_date = request.GET.get("end_date", "2024-01-16")
 
-        # ----------------- CURRENT PERIOD (MEAN OVER RANGE) -----------------
-        # for clipping
+        # =========================================================
+        # CLIP OPTION
+        # Default = FALSE
+        # =========================================================
+        clip_param = request.GET.get("clip", "false").lower() == "true"
+
+        # =========================================================
+        # ZIMBABWE BOUNDING BOX
+        # Used for fast rendering by default
+        # =========================================================
+        zim_bbox = ee.Geometry.Rectangle([23.30, -22.8, 34.0, -15.0])
+
+        # =========================================================
+        # EXACT ZIMBABWE GEOMETRY
+        # Used only when clipping is enabled
+        # =========================================================
         zim = ee.FeatureCollection("FAO/GAUL/2015/level0").filter(
             ee.Filter.eq("ADM0_NAME", "Zimbabwe")
         )
+
         zim_geom = zim.geometry()
 
+        # =========================================================
+        # HELPER FUNCTION
+        # =========================================================
+        def prepare_image(img):
+
+            # Always constrain to Zimbabwe extent
+            img = img.clip(zim_bbox)
+
+            # Only clip to exact Zimbabwe border if enabled
+            if clip_param:
+                img = img.clip(zim_geom)
+
+            return img
+
+        # =========================================================
+        # CURRENT NDVI
+        # =========================================================
         collection_current = (
             ee.ImageCollection("MODIS/061/MOD13A2")
+            .filterBounds(zim_bbox)
             .filterDate(start_date, end_date)
             .select("NDVI")
             .map(lambda img: img.multiply(0.0001))
         )
-        # Compute mean; if no images, fallback to zero image (error handling)
-        current = collection_current.mean().rename("NDVI").clip(zim_geom)
 
-        # ----------------- HISTORICAL SEASONAL (SAME DOY RANGE) -----------------
+        current = collection_current.mean().rename("NDVI")
+
+        current = prepare_image(current)
+
+        # =========================================================
+        # HISTORICAL
+        # =========================================================
         historical = (
             ee.ImageCollection("MODIS/061/MOD13A2")
+            .filterBounds(zim_bbox)
             .filterDate("2001-01-01", "2023-12-31")
             .select("NDVI")
         )
@@ -40,53 +80,78 @@ def get_ndvi_layers_start_end(request):
 
         seasonal_scaled = seasonal.map(lambda img: img.multiply(0.0001))
 
-        baseline = seasonal_scaled.mean().clip(zim_geom).selfMask()
-        ndvi_min = seasonal_scaled.min().clip(zim_geom)
-        ndvi_max = seasonal_scaled.max().clip(zim_geom)
+        baseline = prepare_image(seasonal_scaled.mean().rename("Baseline"))
 
-        # ----------------- ANOMALY -----------------
-        anomaly = current.subtract(baseline).clip(zim_geom)
+        ndvi_min = prepare_image(seasonal_scaled.min().rename("NDVI_Min"))
 
-        # ----------------- VCI -----------------
+        ndvi_max = prepare_image(seasonal_scaled.max().rename("NDVI_Max"))
+
+        # =========================================================
+        # ANOMALY
+        # =========================================================
+        anomaly = prepare_image(current.subtract(baseline).rename("NDVI_Anomaly"))
+
+        # =========================================================
+        # VCI
+        # =========================================================
         vci = (
             current.subtract(ndvi_min)
             .divide(ndvi_max.subtract(ndvi_min))
             .multiply(100)
             .rename("VCI")
         )
-        vci = vci.where(ndvi_max.eq(ndvi_min), 0).clip(
-            zim_geom
-        )  # Handle division by zero
 
-        # ----------------- VISUALISATION PARAMETERS -----------------
-        ndvi_vis = {"min": 0, "max": 1, "palette": ["white", "green"]}
+        # Avoid divide-by-zero
+        vci = vci.where(ndvi_max.eq(ndvi_min), 0)
+
+        vci = prepare_image(vci)
+
+        # =========================================================
+        # VISUALIZATION PARAMETERS
+        # =========================================================
+        ndvi_vis = {
+            "min": 0,
+            "max": 1,
+            "palette": [
+                "#8c510a",
+                "#d8b365",
+                "#f6e8c3",
+                "#c7eae5",
+                "#5ab4ac",
+                "#01665e",
+            ],
+        }
+
         anomaly_vis = {"min": -0.3, "max": 0.3, "palette": ["red", "white", "green"]}
+
         vci_vis = {
             "min": 0,
             "max": 100,
             "palette": ["darkred", "red", "orange", "yellow", "lightgreen", "green"],
         }
 
-        # ----------------- TILE URLs -----------------
+        # =========================================================
+        # TILE URLS
+        # =========================================================
         ndvi_tile = current.getMapId(ndvi_vis)["tile_fetcher"].url_format
+
         baseline_tile = baseline.getMapId(ndvi_vis)["tile_fetcher"].url_format
-        min_tile = ndvi_min.getMapId(ndvi_vis)["tile_fetcher"].url_format
-        max_tile = ndvi_max.getMapId(ndvi_vis)["tile_fetcher"].url_format
+
         anomaly_tile = anomaly.getMapId(anomaly_vis)["tile_fetcher"].url_format
+
         vci_tile = vci.getMapId(vci_vis)["tile_fetcher"].url_format
 
         return JsonResponse(
             {
                 "ndvi": ndvi_tile,
                 "baseline": baseline_tile,
-                "min": min_tile,
-                "max": max_tile,
                 "anomaly": anomaly_tile,
                 "vci": vci_tile,
             }
         )
 
     except Exception as e:
+
         return JsonResponse({"error": str(e)}, status=500)
 
 
