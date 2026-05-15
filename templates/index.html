@@ -453,12 +453,32 @@ async function downloadCurrentLayer() {
             throw new Error("No download URL");
         }
 
+        const mapStart = document.getElementById("mapStartDate").value;
+        const mapEnd = document.getElementById("mapEndDate").value;
+
+        // Clean filename
+        const safeLayer = activeLayerName.replace(/\s+/g, "_");
+
+        const filename = `${safeLayer}_${mapStart}_${mapEnd}.tif`;
+
         const link = document.createElement("a");
+
         link.href = data.download_url;
-        link.download = `${activeLayerName}.tif`;
+
+        link.download = filename;
+
         document.body.appendChild(link);
+
         link.click();
+
         document.body.removeChild(link);
+
+
+
+
+      
+ 
+document.body.removeChild(link);
 
         statusDiv.innerHTML =
             `✅ Download ready`;
