@@ -109,21 +109,8 @@ def get_ndvi_layers_start_end(request):
         # =========================================================
         # VISUALIZATION PARAMETERS
         # =========================================================
-        ndvi_vis = {
-            "min": 0,
-            "max": 1,
-            "palette": [
-                "#8c510a",
-                "#d8b365",
-                "#f6e8c3",
-                "#c7eae5",
-                "#5ab4ac",
-                "#01665e",
-            ],
-        }
-
+        ndvi_vis = {"min": 0, "max": 1, "palette": ["white", "green"]}
         anomaly_vis = {"min": -0.3, "max": 0.3, "palette": ["red", "white", "green"]}
-
         vci_vis = {
             "min": 0,
             "max": 100,
