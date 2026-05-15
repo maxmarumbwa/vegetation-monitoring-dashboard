@@ -23,4 +23,9 @@ urlpatterns = [
         views.get_ndvi_layers_start_end,
         name="get_ndvi_layers_start_end",
     ),
+    path(
+        "get_ndvi_zonal_timeseries/",
+        views.get_ndvi_zonal_timeseries,
+        name="get_ndvi_zonal_timeseries",
+    ),
 ]

@@ -1,6 +1,9 @@
+import ee
+import json
 from django.http import JsonResponse
 from django.shortcuts import render
-import ee
+from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime, timedelta
 from apps.earth_engine.ee_config import initialize_earth_engine
 
 
@@ -234,6 +237,123 @@ def get_ndvi_anomaly_timeseries(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     #
+
+
+########################### get NDVI ZONAL STATS ############################
+
+import ee
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime, timedelta
+
+
+@csrf_exempt
+def get_ndvi_zonal_timeseries(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=400)
+
+    try:
+        data = json.loads(request.body)
+        geometry_geojson = data.get("geometry")
+        start_date = data.get("start_date")
+        end_date = data.get("end_date")
+
+        # Convert GeoJSON to ee.Geometry
+        geom_type = geometry_geojson.get("type")
+
+        if geom_type == "Polygon":
+            ee_geom = ee.Geometry.Polygon(geometry_geojson["coordinates"])
+
+        elif geom_type == "MultiPolygon":
+            ee_geom = ee.Geometry.MultiPolygon(geometry_geojson["coordinates"])
+
+        else:
+            return JsonResponse(
+                {"error": f"Unsupported geometry type: {geom_type}"}, status=400
+            )
+
+        # simplify complex district boundaries
+        ee_geom = ee_geom.simplify(1000)
+
+        # 1. Current NDVI time series (MODIS 16-day)
+        collection = (
+            ee.ImageCollection("MODIS/061/MOD13A2")
+            .filterDate(start_date, end_date)
+            .select("NDVI")
+            .map(
+                lambda img: img.multiply(0.0001).copyProperties(
+                    img, img.propertyNames()
+                )
+            )
+        )
+
+        # 2. Baseline: long-term mean per day-of-year (2000-2020)
+        baseline_coll = (
+            ee.ImageCollection("MODIS/061/MOD13A2")
+            .filterDate("2000-01-01", "2020-12-31")
+            .select("NDVI")
+        )
+
+        def get_doy_mean(doy):
+            return (
+                baseline_coll.filter(ee.Filter.calendarRange(doy, doy, "day_of_year"))
+                .mean()
+                .multiply(0.0001)
+            )
+
+        dates = []
+        ndvi_vals = []
+        baseline_vals = []
+        anomaly_vals = []
+
+        current = datetime.strptime(start_date, "%Y-%m-%d")
+        end = datetime.strptime(end_date, "%Y-%m-%d")
+
+        while current <= end:
+            date_str = current.strftime("%Y-%m-%d")
+            doy = int(current.strftime("%j"))
+            next_date = (current + timedelta(days=16)).strftime("%Y-%m-%d")
+
+            # Get image for this period
+            img = collection.filterDate(date_str, next_date).first()
+            if img is not None:
+                ndvi_val = img.reduceRegion(
+                    reducer=ee.Reducer.mean(),
+                    geometry=ee_geom,
+                    scale=1000,
+                    bestEffort=True,
+                ).get("NDVI")
+                ndvi = ndvi_val.getInfo()
+            else:
+                ndvi = None
+
+            # Baseline
+            baseline_img = get_doy_mean(doy)
+            baseline_val = baseline_img.reduceRegion(
+                reducer=ee.Reducer.mean(), geometry=ee_geom, scale=1000, bestEffort=True
+            ).get("NDVI")
+            baseline = baseline_val.getInfo()
+
+            if ndvi is not None and baseline is not None:
+                ndvi_vals.append(round(ndvi, 3))
+                baseline_vals.append(round(baseline, 3))
+                anomaly_vals.append(round(ndvi - baseline, 3))
+                dates.append(date_str)
+
+            current += timedelta(days=16)
+
+        return JsonResponse(
+            {
+                "data": [
+                    {"date": d, "ndvi": n, "baseline": b, "anomaly": a}
+                    for d, n, b, a in zip(dates, ndvi_vals, baseline_vals, anomaly_vals)
+                ]
+            }
+        )
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 def home(request):
