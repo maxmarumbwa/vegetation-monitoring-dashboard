@@ -106,60 +106,106 @@
 
     <h4>🗺️ Layers</h4>
 
-    <!-- ========================= VEGETATION PRODUCTS ========================= -->
-    <details style="margin-bottom:10px;" open>
-        <summary style="cursor:pointer; padding:8px; background:#e9ecef; border-radius:8px; font-weight:bold;">
-            🌱 Vegetation Products
-            <button class="info-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleInfo('vegInfo')">i</button>
-        </summary>
-        <div id="vegInfo" class="info-panel">
-            <h4>🌱 Vegetation Products</h4>
-            Vegetation products are used to monitor crop conditions, vegetation health, drought stress and biomass productivity.
+<!-- ========================= VEGETATION PRODUCTS ========================= -->
+<details style="margin-bottom:10px;" open>
+    <summary style="cursor:pointer; padding:8px; background:#e9ecef; border-radius:8px; font-weight:bold;">
+        🌱 Vegetation Products
+        <button class="info-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleInfo('vegInfo')">i</button>
+    </summary>
+
+    <div id="vegInfo" class="info-panel">
+        <h4>🌱 Vegetation Products</h4>
+        Vegetation products are used to monitor crop conditions, vegetation health,
+        drought stress and biomass productivity.
+    </div>
+
+    <div style="margin-top:8px; display:flex; flex-direction:column; gap:8px;">
+
+        <!-- NDVI -->
+        <div class="sub-layer">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1;">
+                <input type="radio" name="layer-select" value="NDVI" checked>
+                NDVI
+            </label>
+
+            <label style="font-size:0.8rem;">
+                <input type="checkbox" class="clip-checkbox" data-layer="NDVI">
+                Clip
+            </label>
+
+            <button class="info-btn" onclick="toggleInfo('ndviInfo')">i</button>
         </div>
 
-        <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
-            <!-- NDVI -->
-            <div class="sub-layer">
-                <button onclick="showLayer('NDVI')">🌿 NDVI</button>
-                <label style="font-size:0.8rem;"><input type="checkbox" class="clip-checkbox" data-layer="NDVI"> Clip</label>
-                <button class="info-btn" onclick="toggleInfo('ndviInfo')">i</button>
-            </div>
-            <div id="ndviInfo" class="info-panel">
-                <h4>🌿 NDVI</h4> NDVI measures vegetation greenness and plant vigor using satellite imagery.
-            </div>
-
-            <!-- Baseline -->
-            <div class="sub-layer">
-                <button onclick="showLayer('Baseline')">📊 Baseline</button>
-                <label style="font-size:0.8rem;"><input type="checkbox" class="clip-checkbox" data-layer="Baseline"> Clip</label>
-                <button class="info-btn" onclick="toggleInfo('baselineInfo')">i</button>
-            </div>
-            <div id="baselineInfo" class="info-panel">
-                <h4>📊 Baseline</h4> Baseline represents long-term average vegetation conditions for comparison against current observations.
-            </div>
-
-            <!-- Anomaly -->
-            <div class="sub-layer">
-                <button onclick="showLayer('Anomaly')">⚠️ Anomaly</button>
-                <label style="font-size:0.8rem;"><input type="checkbox" class="clip-checkbox" data-layer="Anomaly"> Clip</label>
-                <button class="info-btn" onclick="toggleInfo('anomalyInfo')">i</button>
-            </div>
-            <div id="anomalyInfo" class="info-panel">
-                <h4>⚠️ Anomaly</h4> Anomaly shows deviations from normal vegetation conditions and helps identify drought stress.
-            </div>
-
-            <!-- VCI -->
-            <div class="sub-layer">
-                <button onclick="showLayer('VCI')"> VCI</button>
-                <label style="font-size:0.8rem;"><input type="checkbox" class="clip-checkbox" data-layer="VCI"> Clip</label>
-                <button class="info-btn" onclick="toggleInfo('vciInfo')">i</button>
-            </div>
-            <div id="vciInfo" class="info-panel">
-                <h4>💧 VCI</h4> VCI indicates vegetation drought stress by comparing current vegetation conditions against historical extremes.
-            </div>
+        <div id="ndviInfo" class="info-panel">
+            <h4>NDVI</h4>
+            NDVI measures vegetation greenness and plant vigor using satellite imagery.
         </div>
-    </details>
 
+        <!-- BASELINE -->
+        <div class="sub-layer">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1;">
+                <input type="radio" name="layer-select" value="Baseline">
+                NDVI long-term average
+            </label>
+
+            <label style="font-size:0.8rem;">
+                <input type="checkbox" class="clip-checkbox" data-layer="Baseline">
+                Clip
+            </label>
+
+            <button class="info-btn" onclick="toggleInfo('baselineInfo')">i</button>
+        </div>
+
+        <div id="baselineInfo" class="info-panel">
+            <h4>NDVI long-term average</h4>
+            Baseline represents long-term average vegetation conditions for comparison
+            against current observations.
+        </div>
+
+        <!-- ANOMALY -->
+        <div class="sub-layer">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1;">
+                <input type="radio" name="layer-select" value="Anomaly">
+                NDVI anomaly
+            </label>
+
+            <label style="font-size:0.8rem;">
+                <input type="checkbox" class="clip-checkbox" data-layer="Anomaly">
+                Clip
+            </label>
+
+            <button class="info-btn" onclick="toggleInfo('anomalyInfo')">i</button>
+        </div>
+
+        <div id="anomalyInfo" class="info-panel">
+            <h4>NDVI anomaly</h4>
+            Anomaly shows deviations from normal vegetation conditions and helps
+            identify drought stress.
+        </div>
+
+        <!-- VCI -->
+        <div class="sub-layer">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1;">
+                <input type="radio" name="layer-select" value="VCI">
+                 Vegetation Condition Index (VCI)
+            </label>
+
+            <label style="font-size:0.8rem;">
+                <input type="checkbox" class="clip-checkbox" data-layer="VCI">
+                Clip
+            </label>
+
+            <button class="info-btn" onclick="toggleInfo('vciInfo')">i</button>
+        </div>
+
+        <div id="vciInfo" class="info-panel">
+            <h4> Vegetation Condition Index (VCI)</h4>
+            VCI indicates vegetation drought stress by comparing current vegetation
+            conditions against historical extremes.
+        </div>
+
+    </div>
+</details>
     <!-- ========================= RAINFALL PRODUCTS (placeholder) ========================= -->
     <details style="margin-bottom:10px;">
         <summary style="cursor:pointer; padding:8px; background:#e9ecef; border-radius:8px; font-weight:bold;">
@@ -239,6 +285,18 @@ function addDays(dateStr, days) {
     return date.toISOString().split('T')[0];
 }
 
+// ======================= RADIO BUTTON SUB-PRODUCTS LAYER SWITCH =======================
+document.querySelectorAll('input[name="layer-select"]').forEach(radio => {
+
+    radio.addEventListener('change', function () {
+
+        if (this.checked) {
+            showLayer(this.value);
+        }
+
+    });
+
+});
 // ======================= INFO PANEL TOGGLE =======================
 function toggleInfo(id) {
     const panel = document.getElementById(id);
