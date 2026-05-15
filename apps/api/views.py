@@ -145,6 +145,167 @@ def get_ndvi_layers_start_end(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
+# ============================================================================
+# DOWNLOAD DISPLAYED MAP AS GEOTIFF
+# ============================================================================
+
+
+def download_ndvi_geotiff(request):
+
+    initialize_earth_engine()
+
+    try:
+        start_date = request.GET.get("start_date", "2024-01-01")
+        end_date = request.GET.get("end_date", "2024-01-16")
+
+        layer = request.GET.get("layer", "NDVI")
+
+        # =========================================================
+        # CLIP OPTION
+        # =========================================================
+        clip_param = request.GET.get("clip", "false").lower() == "true"
+
+        # =========================================================
+        # ZIMBABWE BOUNDING BOX
+        # =========================================================
+        zim_bbox = ee.Geometry.Rectangle([23.30, -22.8, 34.0, -15.0])
+
+        # =========================================================
+        # EXACT ZIMBABWE GEOMETRY
+        # =========================================================
+        zim = ee.FeatureCollection("FAO/GAUL/2015/level0").filter(
+            ee.Filter.eq("ADM0_NAME", "Zimbabwe")
+        )
+
+        zim_geom = zim.geometry()
+
+        # =========================================================
+        # HELPER FUNCTION
+        # =========================================================
+        def prepare_image(img):
+
+            # Always constrain to Zimbabwe extent
+            img = img.clip(zim_bbox)
+
+            # Optional exact clipping
+            if clip_param:
+                img = img.clip(zim_geom)
+
+            return img
+
+        # =========================================================
+        # CURRENT NDVI
+        # =========================================================
+        collection_current = (
+            ee.ImageCollection("MODIS/061/MOD13A2")
+            .filterBounds(zim_bbox)
+            .filterDate(start_date, end_date)
+            .select("NDVI")
+            .map(lambda img: img.multiply(0.0001))
+        )
+
+        current = collection_current.mean().rename("NDVI")
+
+        current = prepare_image(current)
+
+        # =========================================================
+        # HISTORICAL
+        # =========================================================
+        historical = (
+            ee.ImageCollection("MODIS/061/MOD13A2")
+            .filterBounds(zim_bbox)
+            .filterDate("2001-01-01", "2023-12-31")
+            .select("NDVI")
+        )
+
+        doy_start = ee.Date(start_date).getRelative("day", "year")
+        doy_end = ee.Date(end_date).getRelative("day", "year")
+
+        seasonal = historical.filter(ee.Filter.dayOfYear(doy_start, doy_end))
+
+        seasonal_scaled = seasonal.map(lambda img: img.multiply(0.0001))
+
+        baseline = prepare_image(seasonal_scaled.mean().rename("Baseline"))
+
+        ndvi_min = prepare_image(seasonal_scaled.min().rename("NDVI_Min"))
+
+        ndvi_max = prepare_image(seasonal_scaled.max().rename("NDVI_Max"))
+
+        # =========================================================
+        # ANOMALY
+        # =========================================================
+        anomaly = prepare_image(current.subtract(baseline).rename("NDVI_Anomaly"))
+
+        # =========================================================
+        # VCI
+        # =========================================================
+        vci = (
+            current.subtract(ndvi_min)
+            .divide(ndvi_max.subtract(ndvi_min))
+            .multiply(100)
+            .rename("VCI")
+        )
+
+        # Avoid divide-by-zero
+        vci = vci.where(ndvi_max.eq(ndvi_min), 0)
+
+        vci = prepare_image(vci)
+
+        # =========================================================
+        # SELECT EXPORT IMAGE
+        # =========================================================
+        if layer == "NDVI":
+
+            export_image = current
+
+        elif layer == "Baseline":
+
+            export_image = baseline
+
+        elif layer == "Anomaly":
+
+            export_image = anomaly
+
+        elif layer == "VCI":
+
+            export_image = vci
+
+        else:
+
+            return JsonResponse({"error": "Invalid layer"}, status=400)
+
+        # =========================================================
+        # EXPORT REGION
+        # =========================================================
+        export_region = (
+            zim_geom.coordinates().getInfo()
+            if clip_param
+            else zim_bbox.coordinates().getInfo()
+        )
+
+        # =========================================================
+        # CREATE DOWNLOAD URL
+        # =========================================================
+        download_url = export_image.getDownloadURL(
+            {
+                "region": export_region,
+                "scale": 1000,
+                "crs": "EPSG:4326",
+                "format": "GEO_TIFF",
+                "filePerBand": False,
+            }
+        )
+
+        return JsonResponse({"download_url": download_url})
+
+    except Exception as e:
+
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+############################### Get time series of NDVI anomaly for a point ############################
+
+
 def get_ndvi_anomaly_timeseries(request):
     try:
         lat = float(request.GET.get("lat"))

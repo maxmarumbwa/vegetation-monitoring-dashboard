@@ -103,7 +103,9 @@
     <label>📅 Map End Date:</label>
     <input type="date" id="mapEndDate" value="2024-01-16" style="width:100%;">
     <button id="reloadBtn">⟳ Reload map</button>
-
+    <button id="downloadBtn">
+        ⬇ Download GeoTIFF
+    </button>
     <h4>🗺️ Layers</h4>
 
 <!-- ========================= VEGETATION PRODUCTS ========================= -->
@@ -182,7 +184,7 @@
             Anomaly shows deviations from normal vegetation conditions and helps
             identify drought stress.
         </div>
-</ul
+
         <!-- VCI -->
         <div class="sub-layer">
             <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1;">
@@ -413,6 +415,62 @@ function loadGeoJSON() {
         .catch(err => console.error("GeoJSON load error:", err));
 }
 
+// ======================= DOWNLOAD CURRENT LAYER =======================
+async function downloadCurrentLayer() {
+
+    if (!activeLayerName) {
+        alert("No active layer selected");
+        return;
+    }
+
+    const startDate =
+        document.getElementById("mapStartDate").value;
+
+    const endDate =
+        document.getElementById("mapEndDate").value;
+
+    const clip =
+        getClipStatus(activeLayerName);
+
+    const statusDiv =
+        document.getElementById("status");
+
+    statusDiv.innerHTML =
+        `<span class="loading-spinner"></span> Preparing GeoTIFF...`;
+
+    try {
+
+        const response = await fetch(
+            `/download_ndvi_geotiff/?start_date=${startDate}` +
+            `&end_date=${endDate}` +
+            `&layer=${activeLayerName}` +
+            `&clip=${clip}`
+        );
+
+        const data = await response.json();
+
+        if (!data.download_url) {
+            throw new Error("No download URL");
+        }
+
+        const link = document.createElement("a");
+        link.href = data.download_url;
+        link.download = `${activeLayerName}.tif`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        statusDiv.innerHTML =
+            `✅ Download ready`;
+
+    } catch (err) {
+
+        console.error(err);
+
+        statusDiv.innerHTML =
+            `❌ Download failed`;
+    }
+}
 // ======================= TIMESERIES FUNCTIONS =======================
 function loadPixelTimeSeries(lat, lon) {
     const start = document.getElementById("start_date").value;
@@ -566,6 +624,9 @@ function initMap() {
 
     // Initial layer load
     fetchAndShowLayer("NDVI");
+    //donload data
+    document.getElementById("downloadBtn").onclick =
+    downloadCurrentLayer;
 }
 
 // Start everything

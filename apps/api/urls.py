@@ -28,4 +28,9 @@ urlpatterns = [
         views.get_ndvi_zonal_timeseries,
         name="get_ndvi_zonal_timeseries",
     ),
+    path(
+        "download_ndvi_geotiff/",
+        views.download_ndvi_geotiff,
+        name="download_ndvi_geotiff",
+    ),
 ]
